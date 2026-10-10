@@ -38,11 +38,11 @@ public class TankController : MonoBehaviour
     protected virtual void HandleMovement()
     {
         // Move Tank
-        Vector3 wantedPosition = transform.position + (transform.forward * input.ForwardInput * tankSpeed * Time.deltaTime);
+        Vector3 wantedPosition = transform.position + (transform.forward * input.ForwardInput * tankSpeed * Time.fixedDeltaTime);
         rb.MovePosition(wantedPosition);
 
         // Rotate Tank
-        Quaternion wantedRotation = transform.rotation * Quaternion.Euler(Vector3.up * tankRotationSpeed * input.RotationInput * Time.deltaTime);
+        Quaternion wantedRotation = transform.rotation * Quaternion.Euler(Vector3.up * tankRotationSpeed * input.RotationInput * Time.fixedDeltaTime);
         rb.MoveRotation(wantedRotation);
 
     }
@@ -55,7 +55,7 @@ public class TankController : MonoBehaviour
 
             turretLookDir.y = 0f;
 
-            finalTurretLookDir = Vector3.Lerp(finalTurretLookDir, turretLookDir, Time.deltaTime * turretLagSpeed);
+            finalTurretLookDir = Vector3.Lerp(finalTurretLookDir, turretLookDir, Time.fixedDeltaTime * turretLagSpeed);
             turretTransform.rotation = Quaternion.LookRotation(finalTurretLookDir);
         }
     }

@@ -18,11 +18,20 @@ public class ThrowProjectile : MonoBehaviour
 
     // Time at which we’re next allowed to shoot
     private float nextTimeToFire = 0f;
+    private Tank_Inputs input;
+
+    private void Awake()
+    {
+        input = GetComponent<Tank_Inputs>();
+        if (input == null)
+        {
+            Debug.LogError("ProjectileThrower requires a Tank_Inputs component.", this);
+        }
+    }
 
     void Update()
     {
-        // On left mouse‐button down, check cooldown
-        if (Input.GetMouseButtonDown(0) && Time.time >= nextTimeToFire)
+        if (input != null && input.FirePressedThisFrame && Time.time >= nextTimeToFire)
         {
             ThrowProjectile1();
             nextTimeToFire = Time.time + timeBetweenShots;
@@ -37,14 +46,13 @@ public class ThrowProjectile : MonoBehaviour
             return;
         }
 
-        // Instantiate a new Rigidbody at the throwPoint’s position & rotation
-        Rigidbody projInstance = Instantiate(
+        ProjectilePool.Spawn(
             projectilePrefab,
             throwPoint.position,
-            throwPoint.rotation
+            throwPoint.rotation,
+            throwPoint.forward * launchForce
         );
-
-        // Immediately give it velocity forward based on throwPoint’s forward vector
-        projInstance.velocity = throwPoint.forward * launchForce;
+        GameAudioManager.PlayTankShot();
+        CameraShake.GenerateImpulse(throwPoint.position, 0.3f);
     }
 }

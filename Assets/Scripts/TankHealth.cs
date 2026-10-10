@@ -9,6 +9,7 @@ public class TankHealth : MonoBehaviour
     public Image healthFillImage; // Reference to the fill image
 
     public GameObject GameOverPanel;
+    public bool IsGodMode { get; private set; }
 
     private void Start()
     {
@@ -18,14 +19,31 @@ public class TankHealth : MonoBehaviour
 
     public void takeDamage(int damage)
     {
+        if (IsGodMode || damage <= 0 || currentHealth <= 0)
+        {
+            return;
+        }
+
         currentHealth -= damage;
         UpdateHealthBar();
 
         if (currentHealth <= 0)
         {
-            GameOverPanel.SetActive(true);
+            GameAudioManager.PlayLoseLevel();
+            Time.timeScale = 0f;
+
+            if (GameOverPanel != null)
+            {
+                GameOverPanel.SetActive(true);
+            }
+
             Destroy(this.gameObject);
         }
+    }
+
+    public void SetGodMode(bool enabled)
+    {
+        IsGodMode = enabled;
     }
 
     private void UpdateHealthBar()
